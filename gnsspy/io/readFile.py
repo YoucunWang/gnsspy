@@ -500,12 +500,24 @@ def read_obsFile_v3(obsFileName):
                     break
         else:
             # =========================================================================
-            epoch = datetime.datetime(year = int(epoch_year), 
+            # to avoid sth error for int(59.999999)=59
+            second_0x = round(float(epoch_second))
+            epoch_second = int(second_0x)      
+            if epoch_second == 60:
+                epoch = datetime.datetime(year = int(epoch_year), 
                                     month = int(epoch_month),
                                     day = int(epoch_day),
                                     hour = int(epoch_hour),
                                     minute = int(epoch_minute),
-                                    second = int(float(epoch_second)))
+                                    second = epoch_second-1 )
+                epoch += datetime.timedelta(seconds=1)
+            else:
+                epoch = datetime.datetime(year = int(epoch_year), 
+                                    month = int(epoch_month),
+                                    day = int(epoch_day),
+                                    hour = int(epoch_hour),
+                                    minute = int(epoch_minute),
+                                    second = epoch_second )
             epochList.append(epoch)
             del obsLines[0] # delete epoch header line
             # =============================================================================
